@@ -47,7 +47,7 @@ Service name: `AssetIntegrityAgent`
 
 ## 5. Self-Healing (Recovery + Scheduled Task)
 - Service recovery: installer configures Windows to auto-restart the service on failure (3 attempts).
-- Scheduled task: runs hourly as SYSTEM to re-install/start the service if removed or stopped (`repair.ps1`).
+- Scheduled task: runs every 5 minutes as SYSTEM to re-install/start the service if removed or stopped (`repair.ps1`).
 - Manual repair (optional):
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\\Program Files\\AssetAgent\\repair.ps1"

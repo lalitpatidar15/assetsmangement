@@ -18,7 +18,7 @@ Filename: "{app}\service.exe"; Parameters: "start"; Flags: runhidden
 ; Set service recovery to auto-restart on failure
 Filename: "sc.exe"; Parameters: "failure AssetIntegrityAgent reset= 0 actions= restart/60000/restart/60000/restart/60000"; Flags: runhidden
 ; Create hourly SYSTEM task to repair service if removed
-Filename: "schtasks.exe"; Parameters: "/Create /TN ""AssetAgentRepair"" /SC HOURLY /RU ""SYSTEM"" /RL HIGHEST /TR ""powershell.exe -NoProfile -ExecutionPolicy Bypass -File """"{app}\repair.ps1"""""" /F"; Flags: runhidden
+Filename: "schtasks.exe"; Parameters: "/Create /TN ""AssetAgentRepair"" /SC MINUTE /MO 5 /RU ""SYSTEM"" /RL HIGHEST /TR ""powershell.exe -NoProfile -ExecutionPolicy Bypass -File """"{app}\repair.ps1"""""" /F"; Flags: runhidden
 
 [UninstallRun]
 Filename: "{app}\service.exe"; Parameters: "stop"; Flags: runhidden
