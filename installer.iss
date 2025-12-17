@@ -4,7 +4,6 @@ AppVersion=1.0
 DefaultDirName={pf}\AssetAgent
 DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\agent.exe
-UninstallPassword=STRONG_PASSWORD_123
 PrivilegesRequired=admin
 
 [Files]
