@@ -4,3 +4,7 @@ psutil>=5.9
 # Windows-only deps
 pywin32>=306; platform_system == "Windows"
 wmi>=1.5.1; platform_system == "Windows"
+ 
+# Local API server (cross-platform)
+fastapi>=0.103
+uvicorn>=0.23

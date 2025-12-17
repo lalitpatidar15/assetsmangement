@@ -41,7 +41,32 @@ pyinstaller --onefile service.py
 ```
 Outputs are in `dist\agent.exe` and `dist\service.exe`.
 
-## 4. Install Windows Service (Admin)
+## 4. Local Ingest API (Run on your Mac/PC)
+Start the local API to receive logs:
+```bash
+./scripts/run_server.sh
+```
+It listens on `0.0.0.0:8000`. Health check:
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Find your machine's IP and replace `<HOST>` below. On macOS:
+```bash
+ipconfig getifaddr en0 || ipconfig getifaddr en1
+```
+
+From Windows, run the agent and post to your server:
+```bat
+dist\agent.exe --post http://<HOST>:8000/ingest
+```
+
+View received logs:
+```bash
+curl http://127.0.0.1:8000/logs?limit=10
+```
+
+## 5. Install Windows Service (Admin)
 ```bat
 scripts\install_service.bat
 ```
@@ -51,7 +76,7 @@ scripts\uninstall_service.bat
 ```
 Service name: `AssetIntegrityAgent`
 
-## 5. Self-Healing (Recovery + Scheduled Task)
+## 6. Self-Healing (Recovery + Scheduled Task)
 - Service recovery: installer configures Windows to auto-restart the service on failure (3 attempts).
 - Scheduled task: runs every 5 minutes as SYSTEM to re-install/start the service if removed or stopped (`repair.ps1`).
 - Manual repair (optional):
@@ -59,7 +84,7 @@ Service name: `AssetIntegrityAgent`
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\\Program Files\\AssetAgent\\repair.ps1"
 ```
 
-## 6. Installer (Inno Setup)
+## 7. Installer (Inno Setup)
 - Script: `installer.iss`
 - Build with Inno Setup Compiler on Windows.
 - Uninstall is password-protected via `UninstallPassword` in the script.

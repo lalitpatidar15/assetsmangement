@@ -3,6 +3,8 @@ import hashlib
 import psutil
 import platform
 import subprocess
+import argparse
+from urllib import request as urlrequest, error as urlerror
 from datetime import datetime
 
 try:
@@ -109,13 +111,38 @@ def create_fingerprint(disks):
     return hashlib.sha256(base_string.encode()).hexdigest()
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Asset Integrity Agent")
+    parser.add_argument("--post", help="POST results to this URL (e.g., http://127.0.0.1:8000/ingest)")
+    args = parser.parse_args()
+
     disk_info = get_disks()
     fingerprint = create_fingerprint(disk_info)
 
     output = {
         "timestamp": datetime.utcnow().isoformat(),
+        "host": platform.node(),
+        "os": {
+            "system": platform.system(),
+            "release": platform.release(),
+            "version": platform.version(),
+            "machine": platform.machine(),
+        },
         "disks": disk_info,
-        "fingerprint": fingerprint
+        "fingerprint": fingerprint,
     }
 
     print(json.dumps(output, indent=4))
+
+    if args.post:
+        try:
+            data = json.dumps(output).encode("utf-8")
+            req = urlrequest.Request(args.post, data=data, headers={"Content-Type": "application/json"})
+            with urlrequest.urlopen(req, timeout=10) as resp:
+                # Echo minimal confirmation to console
+                print(f"POSTed to {args.post} -> {resp.status}")
+        except urlerror.HTTPError as e:
+            print(f"POST error {e.code}: {e.reason}")
+        except urlerror.URLError as e:
+            print(f"POST failed: {e.reason}")
+        except Exception as e:
+            print(f"POST exception: {e}")
