@@ -45,7 +45,15 @@ scripts\uninstall_service.bat
 ```
 Service name: `AssetIntegrityAgent`
 
-## 5. Installer (Inno Setup)
+## 5. Self-Healing (Recovery + Scheduled Task)
+- Service recovery: installer configures Windows to auto-restart the service on failure (3 attempts).
+- Scheduled task: runs hourly as SYSTEM to re-install/start the service if removed or stopped (`repair.ps1`).
+- Manual repair (optional):
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\\Program Files\\AssetAgent\\repair.ps1"
+```
+
+## 6. Installer (Inno Setup)
 - Script: `installer.iss`
 - Build with Inno Setup Compiler on Windows.
 - Uninstall is password-protected via `UninstallPassword` in the script.
@@ -57,8 +65,11 @@ Typical files packaged:
 The installer will:
 - Copy EXEs to `{pf}\AssetAgent`
 - Install and start the service on finish
+ - Configure service recovery and add self-repair scheduled task
 - Stop and remove the service on uninstall
+ - Remove the scheduled task on uninstall
 
 ## Notes
 - `wmi` and `pywin32` are Windows-only; they are conditionally installed by `requirements.txt` on Windows.
 - Build and service installation must be performed on a Windows machine.
+ - Target machines do NOT need Python; EXEs are standalone. If the service is removed, the scheduled task restores it.

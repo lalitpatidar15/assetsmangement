@@ -3,6 +3,8 @@ import win32service
 import win32event
 import subprocess
 import time
+import os
+import sys
 
 class AssetAgentService(win32serviceutil.ServiceFramework):
     _svc_name_ = "AssetIntegrityAgent"
@@ -18,9 +20,18 @@ class AssetAgentService(win32serviceutil.ServiceFramework):
         win32event.SetEvent(self.stop_event)
 
     def SvcDoRun(self):
+        # Resolve agent path relative to the service executable directory
+        exe_dir = os.path.dirname(sys.executable)
+        agent_path = os.path.join(exe_dir, "agent.exe")
         while True:
-            subprocess.call(["agent.exe"])
-            time.sleep(3600)  # Run every 1 hour
+            try:
+                subprocess.call([agent_path])
+            except Exception:
+                pass
+            # Sleep for ~1 hour, checking stop event every second for graceful shutdown
+            for _ in range(3600):
+                if win32event.WaitForSingleObject(self.stop_event, 1000) == win32event.WAIT_OBJECT_0:
+                    return
 
 if __name__ == "__main__":
     win32serviceutil.HandleCommandLine(AssetAgentService)
