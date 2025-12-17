@@ -22,6 +22,12 @@ Run (Windows):
 python agent.py
 ```
 
+Run locally on macOS/Linux for testing (prints JSON to terminal):
+```bash
+python3 agent.py
+```
+Note: macOS/Linux output uses best-effort system queries and may not include serials for all devices.
+
 ## 3. Build EXEs (PyInstaller)
 Option A: Run helper script
 ```bat
