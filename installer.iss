@@ -5,6 +5,8 @@ DefaultDirName={pf}\AssetAgent
 DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\agent.exe
 PrivilegesRequired=admin
+OutputDir=dist-installer
+OutputBaseFilename=AssetIntegrityAgentSetup
 
 [Files]
 Source: "dist\agent.exe"; DestDir: "{app}"; Flags: ignoreversion
